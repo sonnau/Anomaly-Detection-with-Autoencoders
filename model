@@ -1,0 +1,27 @@
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Define the autoencoder model architecture
+model = Sequential()
+model.add(Dense(128, activation='relu', input_shape=(input_dim,)))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(input_dim, activation='sigmoid'))
+
+# Compile the model
+model.compile(optimizer='adam', loss='mean_squared_error')
+
+# Train the model on normal data
+model.fit(X_train, X_train, epochs=10, batch_size=32)
+
+# Make predictions on test data
+reconstruction = model.predict(X_test)
+
+# Calculate reconstruction error
+mse = np.mean(np.square(X_test - reconstruction), axis=1)
+
+# Detect anomalies based on threshold
+anomalies = mse > threshold
+
+print("Anomalies:", anomalies)
